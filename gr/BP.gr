@@ -1,0 +1,11 @@
+/A/ EXP
+/N/ EXP OP
+#/V/ x(int,0,10)
+/T/ and or not ^ b ( )
+EXP ::= ( not EXP )
+EXP ::= ( EXP OP EXP )
+EXP ::= b
+#EXP ::= b[ x ]
+OP ::= and
+OP ::= or
+OP ::= ^

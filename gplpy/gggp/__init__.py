@@ -1,0 +1,6 @@
+__author__ = "aturing"
+__license__ = "Apache License 2.0"
+__version__ = "1.1.0"
+__maintainer__ = "Pablo Ramos"
+__email__ = "itic@aturing.com"
+__status__ = "Production"

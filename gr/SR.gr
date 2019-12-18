@@ -1,0 +1,15 @@
+/A/ EXP
+/N/ EXP OP_1 OP_2
+#/V/ V(int, 0, 10)
+/T/ ( ) + - / * ^ sin cos log V
+EXP ::= ( OP_1 EXP )
+EXP ::= ( OP_2 EXP EXP )
+EXP ::= V
+OP_1 ::= ^
+OP_1 ::= log
+OP_1 ::= sin
+OP_1 ::= cos
+OP_2 ::= +
+OP_2 ::= -
+OP_2 ::= /
+OP_2 ::= *

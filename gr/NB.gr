@@ -1,0 +1,16 @@
+/A/ N
+/N/ N A B C D b
+/T/ 0 1
+# digits V
+# N ::= b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b
+# cancer V
+# N ::= b b b b b b b b b b b b b b b b b b b b b b b b b b b b b b
+# diabetes
+# N ::= b b b b b b b b b b 
+# boston
+# N ::= b b b b b b b b b b b b b 
+# iris V
+# balance_scale
+N ::= b b b b 
+b ::= 0
+b ::= 1

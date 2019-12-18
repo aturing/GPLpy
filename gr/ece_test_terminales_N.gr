@@ -1,0 +1,6 @@
+/A/ A
+/N/ A B C D
+/T/ D
+A ::= B B
+B ::= C C
+C ::= D D

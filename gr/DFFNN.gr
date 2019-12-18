@@ -1,0 +1,10 @@
+# Use list(map(len, topology.split("0"))) to obtain topology
+# e.g. 1110111011101110111 returns [3, 3, 3, 3, 3]
+
+/A/ L
+/N/ L H
+/T/ 0 1
+L ::= H 0 L
+L ::= H
+H ::= 1 H
+H ::= 1

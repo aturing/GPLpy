@@ -1,0 +1,12 @@
+/A/: S
+/N/: EXP CMD IF MOVEMENT
+/T/: < ^ >  if_food
+S ::= EXP
+EXP ::= CMD EXP
+EXP ::= CMD
+CMD ::= IF
+CMD ::= MOVEMENT
+IF ::= if_food MOVEMENT MOVEMENT
+MOVEMENT ::= <
+MOVEMENT ::= ^
+MOVEMENT ::= >
