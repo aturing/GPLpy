@@ -83,6 +83,7 @@ class Evolution(object):
         self.problem = problem
         self.fitness_args = fitness_args
         self.last_average_fitness = float("inf") if self.optimization is Optimization.min else 0
+        self.last_tolerance_average_fitness = float("inf") if self.optimization is Optimization.min else 0
 
         # Crossover function
         self.x = setup.crossover.crossover
@@ -150,13 +151,12 @@ class Evolution(object):
 
     def converge(self):
         average_fitness = sum(i.fitness for i in self.population) / len(self.population)
-        if average_fitness == 0:
-            improvement = float("inf") if self.optimization is Optimization.min else 0
+        #Obtain improvement
+        if self.optimization is Optimization.min:
+            improvement = 1 - average_fitness / self.last_average_fitness
         else:
-            if self.optimization is Optimization.min:
-                improvement = 1 - average_fitness / self.last_average_fitness
-            else:
-                improvement = average_fitness / self.last_average_fitness - 1
+            improvement = average_fitness / self.last_average_fitness - 1
+        self.last_average_fitness = average_fitness
 
         if self.logger:
             self.logger.log_evolution(best_fitness=float(self.population[0].fitness),
@@ -170,10 +170,13 @@ class Evolution(object):
                 return True
 
         if not self.generation % self.tolerance_step:
-            if improvement < self.tolerance:
+            if self.optimization is Optimization.min:
+                tolerance_improvement = 1 - average_fitness / self.last_tolerance_average_fitness
+            else:
+                tolerance_improvement = average_fitness / self.last_tolerance_average_fitness - 1
+            if tolerance_improvement < self.tolerance:
                 return True
-
-            self.last_average_fitness = average_fitness
+            self.last_tolerance_average_fitness = average_fitness
         return False
 
     def finish(self):
