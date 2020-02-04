@@ -154,9 +154,9 @@ class Evolution(object):
             improvement = float("inf") if self.optimization is Optimization.min else 0
         else:
             if self.optimization is Optimization.min:
-                improvement = self.last_average_fitness / average_fitness - 1
+                improvement = 1 - average_fitness / self.last_average_fitness
             else:
-                improvement = 1 - self.last_average_fitness / average_fitness
+                improvement = average_fitness / self.last_average_fitness - 1
 
         if self.logger:
             self.logger.log_evolution(best_fitness=float(self.population[0].fitness),
