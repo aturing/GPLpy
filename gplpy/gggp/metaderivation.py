@@ -92,6 +92,12 @@ class MetaDerivation(object):
         with self.lock:
             pool.append(derivation)
 
+    def new_forced_derivation(self, recursions, estimation_distribution_model=False, exploration_rate=0.):
+        # Force a derivation tree with forced_recursions recursions        
+        return Derivation(*self.produce_derivation(remaining_recursions=recursions,
+                                                estimation_distribution_model=estimation_distribution_model,
+                                                exploration_rate=exploration_rate))
+
     def produce_derivation(self, remaining_recursions, estimation_distribution_model=False, exploration_rate=0.):
         # Select next derivation according uniform or optimization probability distribution
         # If not uniform, apply mutation. If mutate, obtain next derivation tree uniformly,
@@ -117,6 +123,7 @@ class MetaDerivation(object):
 
         # Split remaining recursions between recursive nonterminal symbols
         # TODO WARNING It can reduce or increase by 1 the remaining recursions
+        remaining_recursions = remaining_recursions-1 if production.left in production.right else remaining_recursions
         remaining_recursions_per_recursive_nt = np.round(np.random.dirichlet(np.ones(production.recursion_arity)) * remaining_recursions).tolist()
         
         word = []
