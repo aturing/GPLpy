@@ -103,13 +103,13 @@ class DBLogger(object):
     def save_experiment_statistics(self, experiment_id, it_stats, f_stats, l_it_stats):
         iterations_mean = it_stats.mean()
         iterations_deviation = it_stats.std(ddof=1)
-        iterations_confidence_interval = stats.norm.interval(0.95, loc=iterations_mean, scale=iterations_deviation)
+        iterations_confidence_interval = stats.norm.interval(0.95, loc=iterations_mean, scale=iterations_deviation/np.sqrt(it_stats.count()))
         fitness_mean = f_stats.mean()
         fitness_deviation = f_stats.std(ddof=1)
-        fitness_confidence_interval = stats.norm.interval(0.95, loc=fitness_mean, scale=fitness_deviation)
+        fitness_confidence_interval = stats.norm.interval(0.95, loc=fitness_mean, scale=fitness_deviation/np.sqrt(f_stats.count()))
         learning_iterations_mean = l_it_stats.mean()
         learning_iterations_deviation = l_it_stats.std(ddof=1)
-        learning_iterations_confidence_interval = stats.norm.interval(0.95, loc=fitness_mean, scale=fitness_deviation)
+        learning_iterations_confidence_interval = stats.norm.interval(0.95, loc=fitness_mean, scale=fitness_deviation/np.sqrt(l_it_stats.count()))
 
         self.db.experiment.update({'_id': experiment_id},
                                   {'$set': {'statistics':
