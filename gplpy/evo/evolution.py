@@ -5,6 +5,7 @@ from collections import namedtuple
 from threading import Thread, Semaphore, Lock, Event
 from enum import Enum
 import numpy as np
+from scipy.special import softmax
 from gplpy.gggp.metaderivation import MetaDerivation, EDA
 from gplpy.gggp.grammar import ProbabilisticModel
 from gplpy.gggp.derivation import Derivation, OnePointMutation, WX
@@ -142,6 +143,20 @@ class Evolution(object):
         else:
             return [max(tournament[i:i + battle_size], key=lambda x: x.fitness)
                     for i in range(0, len(tournament), battle_size)]
+
+    def softmax_selection(self):
+        fitness = np.array([i.fitness for i in self.population])
+        fitness_std_1 = fitness/np.std(fitness)
+        if self.optimization == Optimization.min:
+            return np.random.choice(self.population,
+                                    size=self.parents_pool_size,
+                                    replace=False,
+                                    p=softmax(np.abs(fitness_std_1-np.max(fitness_std_1))))
+        else:
+            return np.random.choice(self.population,
+                                    size=self.parents_pool_size,
+                                    replace=False,
+                                    p=softmax(fitness_std_1-np.min(fitness_std_1)))
 
     def replacement(self, offspring):
         # Deletion of worst individuals
