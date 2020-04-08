@@ -7,6 +7,8 @@ from gplpy.evo.log import DBLogger
 from gplpy.gggp.derivation import Derivation, WX, OnePointMutation
 from gplpy.gggp.metaderivation import MetaDerivation, EDA
 
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Activation
 
 from bson.objectid import ObjectId
 import tensorflow
@@ -23,40 +25,41 @@ class DFFNN(Problem):
     epochs = 10
     batch_size = 128
 
-    @staticmethod
-    def fitness(individual, args):
-        from tensorflow.keras.models import Sequential
-        from tensorflow.keras.layers import Dense, Activation
-
+    def __init__(self, individual, args):
+        super().__init__()
+        self.individual = individual
         topology = list(map(len, str(individual.derivation).replace(' ','').split("0")))
-        input_size, num_classes, X_train, X_test, y_train, y_test = args
+        input_size, num_classes, self.X_train, self.X_test, self.y_train, self.y_test = args
 
-        model = Sequential()
+        self.model = Sequential()
         # First layer and hidden layer
-        model.add(Dense(topology.pop(0), activation='relu', input_dim=input_size))
+        self.model.add(Dense(topology.pop(0), activation='relu', input_dim=input_size))
         # Hidden layers
         for layer_size in topology:
-            model.add(Dense(layer_size, activation='relu'))
+            self.model.add(Dense(layer_size, activation='relu'))
         # Output layer
-        model.add(Dense(1 if num_classes==2 else num_classes, activation='sigmoid' if num_classes==2 else 'softmax'))
+        self.model.add(Dense(1 if num_classes==2 else num_classes, activation='sigmoid' if num_classes==2 else 'softmax'))
 
         # Setup optimizer
-        model.compile(loss='binary_crossentropy'if num_classes==2 else 'categorical_crossentropy',
+        self.model.compile(loss='binary_crossentropy'if num_classes==2 else 'categorical_crossentropy',
                     optimizer='adam',
                     metrics=['accuracy'])
 
-        history = model.fit(X_train, y_train,
+
+    def run(self):
+        history = self.model.fit(self.X_train, self.y_train,
                             epochs=DFFNN.epochs,
                             batch_size=DFFNN.batch_size,
                             verbose=0,
-                            validation_data=(X_test, y_test))
+                            validation_data=(self.X_test, self.y_test))
 
-        score = model.evaluate(X_test, y_test, verbose=0)
+        score = self.model.evaluate(self.X_test, self.y_test, verbose=0)
         #print('Test loss:', score[0])
         #print('Test accuracy:', score[1])
-        individual._fitness = score[0]
-        individual.learning_iterations = len(history.epoch)
-        individual.mature.set()
+        self.individual._fitness = score[0]
+        self.individual.learning_iterations = len(history.epoch)
+        self.individual.mature.set()
+
 
 if __name__ == "__main__":
     sys.setrecursionlimit(10000)

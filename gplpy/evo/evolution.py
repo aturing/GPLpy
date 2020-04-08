@@ -14,25 +14,27 @@ class Optimization(Enum):
     min = False
     max = True
 
-class Problem:
+class Problem(Thread):
     optimization = Optimization.min
 
+    def __init(self):
+        super().__init__()
 
-class Individual(Thread):
+
+class Individual:
     def __init__(self, derivation_init, problem, converged, fitness_args=(), max_recursions=100, derivation=None, 
                  async_learning=False, learning_tolerance_step=50, learning_tolerance=0.02, maturity_tolerance_factor=10):
-        super().__init__()
         if derivation:
             self.derivation = derivation
         else:
             self.derivation = derivation_init(max_recursions)
 
         self._fitness = None
-        self.problem = problem
-        self.fitness_args = fitness_args
+        self.problem = problem(self, fitness_args)
         self.learning_iterations = 0
 
         # Asyncronous learning atributes
+        self._join = True
         self.async_learning = async_learning
         self.alive = Event()
         self.learn = Semaphore(1)
@@ -51,9 +53,17 @@ class Individual(Thread):
             self.learn.release()
         return self._fitness
 
-    def run(self):
+    def join(self):
+        if self._join:
+            self.problem.join()
+
+    def start(self):
         self.alive.set()
-        self.problem.fitness(self, self.fitness_args)
+        self.problem.start()
+        if not self.async_learning:
+            self._join = False
+            del self.problem
+
 
 class Evolution(object):
     def __init__(self, logger, grammar, setup, problem, fitness_args=()):
